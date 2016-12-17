@@ -1,0 +1,69 @@
+1. Typine in "man man" shows the flags for specific options. We can see that
+"man -k" will print the commands that have that specific word on their man page
+
+2. The programs cp and wc are located in the /usr/local/cs/bin directory.
+
+3. After going to the /usr/bin directory, type in "ls -al ?," which prints out
+all of the contents in the bin directory with their permissions.  There are
+three executable programs with one character long names. w shows who is logged
+on and what they are doing.  X is a portable, network-transparent window 
+system. [ is also listed, but there is nothing listed when using "man [."
+
+4. Going to the /usr/bin directory, type in "ls -l emacs," which prints out the
+link emacs is pointing to, which is /etc/alternative/emacs.
+
+5. According to the chmod page, which can be found by typing man chmod, (g) 
+specifies other users in the file's group, (+) causes the selected file mode
+bits to be added to the existing file mode bits of each file, and (s) sets
+user or group ID on execution.  So chmod g+s allows the file's group to set 
+the group ID on execution.  Then, chmod o-x removes the capability for
+users outside the file group to execute the file.
+
+6. Typing in man find and going to the tests section of the page, the option 
+is -mtime 21.
+
+7. Using find / -mtime 21, there are more than 5000 files that have been
+edited in the last three weeks.
+
+8. Going to the /usr/bin directory, where find is located, type in 
+"find -type l | wc -l," which shows that there are 354 symbolic links.
+
+9. Going to the /usr/lib directory, typing in "ls -lt" will print out a 
+list of programs with their permissions and dates modified.  According 
+to the list, the oldest regular file is libICE.so.6.3.0, which was at 
+the bottom of the list. 
+
+10. After typing in "man locale," it says that locale grabs data
+from LC_*environment variables.
+
+11. Typing in "C-h a sort," we can see a list printed out with commands
+with the word sort in it.  There are 18 commands: buffer-menu-sort, 
+buffer-menu-sort-by-column, ibuffer-invert-sorting,ibuffer-toggle-sorting-mode,
+rmail-sort-by-author, rmail-sort-by-correspondent, rmail-sort-by-date,
+rmail-sort-by-labels, rmail-sort-by-lines, rmail-sort-by-recipient,
+rmail-sort-by-subject, sort-columns, sort-fields, sort-lines,
+sort-numeric-fields, sort-pages, sort-paragraphs, sort-regexp-fields.
+
+12. After typing in "emacs," I was brought to the editor.
+Then, I inputed "C-h k" which allows me to input the keys to see what each do.
+"C-M-a" runs the command beginning-of-defun, which brings you to the beginning 
+of the function.
+"C-M-b" runs the command backward-sexp, which moves the cursor backwards.
+"C-M-c" runs the command exit-recursive-edit, which exits the most 
+inner recursive edit.
+"C-M-d" runs the command down-list, which moves down one set of parentheses.
+"C-M-e" runs the command end-of-defun, which moves the cursor to the 
+end of a function.
+"C-M-f" runs the command forward-sexp, which moves the cursor forward.
+"C-M-g" runs the command keyboard-quit, which causes a quit in a script.
+"C-M-h" runs the command mark-defun, which places a mark at the end 
+of a function.
+
+13. Using the "C-h ? k" command in Emacs, "C-g" is the same as "C-M-g," which
+causes a quit directly during execution of Lisp code.
+
+14. Using the "C-h ? f" command in Emacs, the "yank" command will reinsert
+the most recently killed text
+
+15. The "dired" command in Emacs lists all files in the directory, including
+hidden files, whilc "ls -l" does not list the hidden files.
