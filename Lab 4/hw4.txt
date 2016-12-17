@@ -1,0 +1,44 @@
+To start out this part of the project, I first had to create a new branch by
+using the command "git checkout -b quote" which creates a new branch called
+"quote" which afterwards, I used the command "git checkout v3.0" to checkout
+the 3.0 version.  Next, I used the command "patch -p1 < quote-3.0-patch.txt"
+in order to apply the patch.  For some reason, I kept running into the problem
+of "reversing" patches.  To remedy this, I downloaded a new diffutils
+directory into a new directory called "githomework" and applied the "patch"
+command to it, which seemed to remedy the situation.
+
+After reading about the "add-change-log-entry-other-window" (C-x 4 a) and its
+documentation, I used the following commands to create and edit a "ChangeLog"
+file:
+          emacs src/(file)
+          C-x 4 a
+
+With each file, I gave a brief description of the changes made.  To make sure
+I was at the right branch, I used the command "git branch" which showed that I
+was not on any branch at all.  I tried changing to my "quote" branch, but kept
+getting rejection errors.  To get around this, I created a new branch called
+"quote1" to continue.
+
+To continue with the homework, I ran the following commands:
+          git add . (adds the current directory for staging)
+          git commit --f ChangeLog (commit the changes using the ChangeLog
+              entry as the commit message)
+
+Now, to create the new patch I used the command:
+"git format-patch -1 --stdout > formatted-patch.txt"
+
+My partner for this lab was Haoqing Dong (304622150) who tested whether or not
+my patch actually worked.  According to him, after he built it, he reported
+to me that it works. To continue, I ran the command "make distdir" which
+created a new directory called "diffutils-3.0.1-04ec" which held the ChangeLog
+file.  Looking into it using emacs, I saw that the commit was made.
+
+To finish off the lab, I created a new directory (mkdir githomework1)
+so nothing I would do at this point would interfere with any of my files.  I
+cloned the repository by using the command "git clone ~eggert/src/gnu/emacs"
+which created a new directory called "emacs" and I ran into some issues using
+the "gitk" command.  After looking on Piazza, I had to install Xming and
+change some settings of my "ssh" session.  I also had to change my path to
+"export PATH=/usr/local/cs/bin:$PATH" so I could run the "gitk" command.
+Once I did, a window in Xming popped up.  The description and the photo
+of the window will be attached in separate files.
