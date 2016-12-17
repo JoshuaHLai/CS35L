@@ -83,16 +83,3 @@ Exercise 1.6
    the number of possibilities over infinity is 0, thus I believe the
    probability of the product of two random numbers that would give a valid
    calculation would be near 0.
-
-
-
-
-
-
-
-
-
-
-
-
-
