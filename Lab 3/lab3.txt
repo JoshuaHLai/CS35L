@@ -1,0 +1,123 @@
+Patching Software
+Preface: Since this lab requires me to use the "sudo" command, I did the
+process on my own personal machine.
+
+To start out the lab, I used the following command:
+"wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz," which downloaded
+the tar file into my home directory.
+
+To extract the files, I used the command "tar -xzvf coreutils-7.6-tar-gz"
+which created a new directory called "coreutils-7.6."  Once the files were
+extracted, I changed directories (cd coreutils-7.6) into the 
+"coreutils-7.6" directory and created a new directory called "temp" with the
+command "mkdir temp."
+
+Next, I ran the following command:
+"./configure --prefix=/u/eng/class/classlai/coreutils-7.6/temp/coreutils-7.6"
+I did run into a few problems since the command required an asolute directory
+name.  The reason I ran into this problem was because I set the prefix flag to
+my home directory instead of the "temp" directory in "coreutils-7.6."  After,
+I ran the "make" command and once that was finished, I ran the "make install"
+command.
+
+To reproduce the bug, I first changed to my home directory (cd).  Next, I
+changed the locale by using the command "export LC_ALL='en_US.UTF-8'."  To
+make sure I was in the correct locale, I used the command "echo $LC_ALL."
+Once that was finished, I changed directories (cd) into the bin directory
+(~/coreutils-7.6/temp/coretuils-7.6/bin) where I ran the command
+"ls -l /bin/bash," which showed the incorrect format of the date as shown:
+
+-rwxr-xr-x 1 root root 941880 2015-12-22 01:12 /bin/bash
+
+To patch the bug, I changed directories to my "coreutils-7.6" directory and
+created a new file called "patching_file" where I copied the Brady patch.
+To apply the patch, I used the command "patch -p1 < patching_file" to patch
+the file, which went through with no errors.  After looking at "man patch,"
+I saw that the flag -p1 will remove the leading forward-slash in the two files
+at the top of "patching_file" (a/src/ls.c and b/src/ls.c).
+
+Going to the top level of the source (src) tree, I ran the "make" command and
+the following was the output:
+
+Output for make at source tree:
+make  all-recursive
+make[1]: Entering directory `/w/home.16/class/classlai/coreutils-7.6'
+Making all in lib
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+make  all-recursive
+make[3]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+make[4]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+make[4]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+make[3]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/lib'
+Making all in src
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/src'
+make  all-am
+make[3]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/src'
+make[3]: Nothing to be done for `all-am'.
+make[3]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/src'
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/src'
+Making all in doc
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/doc'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/doc'
+Making all in man
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/man'
+  GEN    dir.1
+  GEN    vdir.1
+  GEN    ls.1
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/man'
+Making all in po
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/po'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/po'
+Making all in tests
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6/tests'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6/tests'
+Making all in gnulib-tests
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make[4]: Entering directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make[4]: Nothing to be done for `all-am'.
+make[4]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make[3]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6
+	/gnulib-tests'
+make[2]: Entering directory `/w/home.16/class/classlai/coreutils-7.6'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6'
+make[1]: Leaving directory `/w/home.16/class/classlai/coreutils-7.6'
+
+
+For most of the directories, there wer no changes since they have nothing to
+do with the ls.c file.  Overall, there were substantially fewer commands
+executed in comparison to the first time I ran make.  Some of the files
+changed were "dir.1," "vdir.1," and "ls.1" which were created due to
+re-compiling the "coreutils-7.6" directory.
+
+To check the patch was updated, I changed to the source (src) directory in
+"coreutils-7.6" and used the commands "./ls -l" and "ls -l."  Here are the
+outputs:
+	./ls -l /bin/bash   -rwxr-xr-x 1 root root 941880 Dec 22  2015 /bin/bash
+	ls -l /bin/bash     -rwxr-xr-x 1 root root 941880 Dec 22  2015 /bin/bash
+
+Since the outputs are the same, I know that the patch was applied correctly.
+To check the difference between the a file and a file created a year ago,
+I had to look at the "man touch" page.  Looking at it, I saw that the -t
+flag will allow me to set the date it was created instead of the current
+time. Using the following commands will show what are the differences between
+the two files:
+	touch -t 201601011111.30 check_file_new
+	touch -t 201510011111.30 check_file_old
+	./ls -l
+
+Using the ls command worked on the old file, but it displayed the year instead
+of the time since the last time it was "edited" was a year ago, so the year
+will take precedence.  The ls command worked correctly with the new file.
