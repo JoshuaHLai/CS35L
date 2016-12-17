@@ -1,0 +1,98 @@
+Exercise 1.1
+1.
+2. C-s I C Enter
+3. C-s L a b o r a t o r y Esc b
+4. C-s s e l f - Esc b
+5. C-s a r r o w Esc b
+6. C-e
+7. C-a
+8. No
+9. No
+10. C-x C-c
+
+Exercise 1.2
+1.
+2. Esc-g Esc-g 1 8 C-k
+3. C-s D E L Enter C-a C-k
+4. C-s < ! C-a C-k C-k C-k C-k C-k C-k
+5. C-s < ! C-b C-b C-d C-d C-d C-d C-d C-d C-d
+
+Exercise 1.3
+1.
+2. M-% A s s i g n m e n t 1 Enter A s s i g n m e n t 3 7 Enter y y Esc
+3. M-% U T F - 8 Enter US-ASCII Enter y Esc
+4. C-s < / o l > C-a Enter
+5. C-x C-c
+
+Exercise 1.4
+1. 
+2. 
+3. Esc > C-p C-p C-p C-p C-p C-SP C-e Esc-w Esc-g Esc-g 3 3 8 C-e C-y
+4. Esc > Esc-g Esc-g 3 7 5 C-SP C-e Down Down Down Esc-w Esc-g Esc-g 
+   3 0 0 C-e C-y
+   Esc > Esc-g Esc-g 3 6 4 C-Sp C-e Esc-w Esc-g Esc-g 9 0 C-e C-y
+   Esc > Esc-g Esc-g 3 5 9 C-Sp C-e Down Esc-w Esc-g Esc-g 1 5 C-e C-y
+5. Esc-g Esc-g 3 5 3 C-Sp C-e Esc > C-w
+6. C-y
+7. Esc-g Esc-g 3 5 3 < ! - - Esc > - - >
+8. Esc < M-% <ol> Enter <Ol> Enter y y y y y y y ; I found 7 instances.
+9. C-x C-c
+
+Exercise 1.5
+1. M-x m a k e SP d i r e c t o r y Enter j u n k Enter
+2. C-x C-f j u n k / h e l l o . c Enter
+3. M-x c o m p i l e Enter h e l l o Enter y
+4. M-x s h e l l SP c o m m a n d Enter . / h e l l o > h e l l o - o u t 
+   Enter
+5.
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n';
+  char b = '\\';
+  char q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn';
+  %c  char b = '%c%c';%c  char q = '%c';%c  char const *p = %c%s%c;%c  printf
+  (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);%c  return 0;%c}
+  %c";
+  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+Exercise 1.6
+1. C-x b * s c r a t c h * Enter
+2. ( r a n d o m SP 1 0 0 0 ) C-j
+3. ( s e t q SP x SP ( r a n d o m SP 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ) C-j
+   ( s e t q SP y SP ( r a n d o m SP 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ) C-j
+4. ( * SP x SP y ) C-j
+   For this question, x = 2721129906715214 and y = 2839245763944848
+   Multiplying the two gave me -896508095926380064, which is obviously
+   the wrong answer.  This most likely happened since the number is larger
+   than the int data type can actually hold, causing overflow.
+5. M-: ( * SP x SP y) Enter
+   This command gives the same value with some extra information that does
+   not seem to be discernable.
+6. In a mathematical sense, the numbers are not truly random since we had to
+   provide a parameter as a maximum number of what our "random" number could
+   be.
+7. Assuming that the two numbers are truly random, the probability of the
+   product of the two numbers would be near 0.  My reasoning is that we know
+   that the largest number an int can hold is 2,147,483,648 and there are
+   infinitely many numbers that are larger than what an int can hold.  Thus,
+   the number of possibilities over infinity is 0, thus I believe the
+   probability of the product of two random numbers that would give a valid
+   calculation would be near 0.
+
+
+
+
+
+
+
+
+
+
+
+
+
