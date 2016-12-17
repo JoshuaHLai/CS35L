@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export LC_ALL='C'
+
+grep "<td>.*</td>" | sed 's/<[^>]*>//g' | sed '/^$/d' | sed 'g;n;p' | sed "s/\`/'/g" | tr 'A-Z' 'a-z' | sed 's/[, ]/\n/g' | sed '/^$/d' | sed "/[^pk'mnwlhaeiou]/d" | sort -u

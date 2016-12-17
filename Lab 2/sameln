@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#Save argument passed in
+dir=$1
+FINAL='ls -a $dir'
+
+#Create array to store data
+declare -a array
+let count=0
+
+#Loop to check file
+for FILE in $FINAL
+do
+
+	#Check if file is a link
+    if [ ! -L "$dir/$FILE" ]
+    then
+    	#Check if file is not actually a file
+        if [ ! -f "$dir/$FILE" ]
+            echo "$dir/$file is NOT regular file."
+        else
+	    then
+	    	#File cannot be read
+	        if [ ! -r "$dir/$FILE" ]
+	        then
+		        echo "Cannot not access file"
+		        continue
+	        fi
+	        array[$count]="$dir/$FILE"
+	        let count=count+1
+        fi
+    fi
+done
+
+let size=${#array[@]} 
+
+for (( i=0; i<$size-1; i++ ))
+do
+    for (( j=i+1; j<$size; j++ ))
+    do
+    	#Check if files are the same
+	    if  cmp -s ${array[i]} ${array[j]}
+	    then
+	    	#Create hard link and delete duplicate
+	        ln -f ${array[i]} ${array[j]}
+	        for (( k=$j ; k<$size-1; k++ ))
+	        do
+	        	#Shift array to remove duplicate
+		        let f=$k+1
+	            array[k]="${array[f]}"
+	        done
+
+	        #Update size
+	        let j=$j-1
+	        let size=$size-1
+	    fi
+    done
+done
