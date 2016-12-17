@@ -1,0 +1,36 @@
+1. The Brady patch removed the line "case_long_iso_time_style:" since
+   it was a repeated line in the code.  Removing the line would ensure
+   that the script would not go back to the top of the switch statement
+   again.
+
+2. If the company I work for were to implement the patch, I would advise to
+   be wary of using the patch in no-English speaking countries.  In the
+   documentation of the patch, Brady suggests that this patch will work 
+   strictly with the English time format, so it would not help countries
+   who do not follow this format.
+
+3. Here is the message that is printed out:
+   Traceback (most recent call last):
+     File "randline.py", line 70, in <module>
+       main()
+     File "randline.py", line 64, in main
+       sys.stdout.write(generator.chooseline())
+     File "randline.py", line 34, in chooseline
+     return random.choice(self.lines)
+     File "/usr/lib64/python2.6/random.py", line 261, in choice
+     return seq[int(self.random() * len(seq))]  # raises IndexError if 
+     seq is empty
+   IndexError: list index out of range
+
+   Clearly, we can see that the script is trying to access an element
+   inside a list that has no elements.
+
+4. Here is the message that is printed out:
+   File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+   SyntaxError: invalid syntax
+
+   Here, the error changes from IndexError to SyntaxError.
+   According to online documentation, the error indicates that exceptions in
+   Python2 are iterable, but that function was removed in Python3.
