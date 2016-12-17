@@ -1,0 +1,138 @@
+To start out this lab, I first had to download the "coreutils" tar file,
+which I did by just clicking on the link given on the assignment page.  Next,
+I moved the .tar file to a new directory by using the following command:
+"mv coreutils-with-bug.tar.gz Assignment_5"
+which moved the .tar file to a new directory called "Assignment_5"
+
+Next, I had to "un-tar" the directory by using the command
+"tar -xvf coreutils-with-bug.tar.gz" which printed out a long list of files
+that were contained in the .tar file and created a new directory containing
+the files.  After changing into that directory ("cd coreutils-with-bug"), I
+read the file "INSTALL" to see to how to build the version, I first ran the
+command "./configure" which listed a long set of lines.  Afterwards, I used
+the command "make" which printed out a long set of lines also; at the end of
+it, it also printed out a list of errors shown below:
+
+In file included from utimecmp.c:41:
+utimens.h:2: error: conflicting types for 'futimens'
+/usr/include/sys/stat.h:374: note: previous declaration of 'futimens' was here
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.16/class/classlai/Assignment_5/coreutils
+ -with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.16/class/classlai/Assignment_5/coreutils
+ -with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.16/class/classlai/Assignment_5/coreutils
+ -with-bug'
+make: *** [all] Error 2
+[classlai@lnxsrv03 ~/Assignment_5/coreutils-with-bug]$ make check
+Making check in lib
+make[1]: Entering directory `/w/home.16/class/classlai/Assignment_5/coreutils
+ -with-bug/lib'
+if gcc -DHAVE_CONFIG_H -DLIBDIR=\"/usr/local/lib\" -I. -I. -I..  -I.. -I.   
+ -g -O2 -MT t-fpending.o -MD -MP -MF ".deps/t-fpending.Tpo" -c -o t-fpending.o
+ t-fpending.c; \
+        then mv -f ".deps/t-fpending.Tpo" ".deps/t-fpending.Po"; else rm -f "
+         .deps/t-fpending.Tpo"; exit 1; fi
+if gcc -DHAVE_CONFIG_H -DLIBDIR=\"/usr/local/lib\" -I. -I. -I..  -I.. -I.   
+ -g -O2 -MT utimecmp.o -MD -MP -MF ".deps/utimecmp.Tpo" -c -o utimecmp.o
+ utimecmp.c; \
+        then mv -f ".deps/utimecmp.Tpo" ".deps/utimecmp.Po"; else rm -f "
+         .deps/utimecmp.Tpo"; exit 1; fi
+In file included from utimecmp.c:41:
+utimens.h:2: error: conflicting types for 'futimens'
+/usr/include/sys/stat.h:374: note: previous declaration of 'futimens' was here
+make[1]: *** [utimecmp.o] Error 1
+make[1]: Leaving directory `/w/home.16/class/classlai/Assignment_5
+ /coreutils-with-bug/lib'
+make: *** [check-recursive] Error 1
+
+Looking into the error, I could see that there is an issue in the file
+"coreutils-with-bug/lib/utimecmp.c" due to the type "futimens" which indicates
+that it the version can't be built.
+
+After grabbing the new patch from the assignment webpage using the command
+"wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/coreutils.diff"
+I moved the file to the "coreutils-with-bugs" directory and ran the command
+"patch -p0 < coreutils.diff" which patched 5 different files listed below:
+lib/utimens.c, lib/utimens.h, src/copy.c, src/tee.c, src/touch.c
+
+Once the patch was finished, I ran the "building" commands again
+(i.e. ./configure, make, etc.), which still produced some errors. After
+reading the "INSTALL" file more thoroughly , I realized that when I run the
+command "./configure" I need to set certain parameters, specifically, the
+CFLAGS.  So the new command is "./configure CFLAGS="-g -O0" which worked.
+After, I went through the remaining "building" commands.  The patch was
+applied by looking into the files and noticing that certain filenames were
+changed by adding "coreutils_" to the beginning of them.
+
+To reproduce the problem, I created a temporary directory and followed the
+instructions on the assignment webpage, but changing one instruction to:
+"TZ=UTC0 ~/Assignment_5/coreutils-with-bug/src/ls -lt --full-time
+  wwi-armistice now now1"
+in order to utilize the "ls" command with the bugs.  Eventually, to make
+things easier, I just copied the file into the temporary directory. The error
+is reproduced below:
+
+-rw-r--r-- 1 classlai class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classlai class 0 2016-10-28 08:01:36.873009870 +0000 now1
+-rw-r--r-- 1 classlai class 0 2016-10-28 08:01:30.342764189 +0000 now
+
+
+In order to fix the bug, I used two separate sessions of PuTTY, one for fixing
+the bugs in emacs and one for running gdb.  First, I looked at the file "ls.c"
+to find the bugs.  Since this type of error is a sorting error, I decided to
+look for functions with the word "sort" in them.  On line 263, we can find
+the declaration for the function "sort_files()" which led me to the definition
+of it at line 2953. Moving over to gdb, I did run into some issues getting it
+started.  Once looking on Piazza, I found my error.  I ran the following
+commands through the gdb session:
+
+    gdb ls
+    run -lt wwi-armistice now now1
+    break sort_files
+    *use (gdb) s to step through function*
+    break qsort (set breakpoint at qsort)
+    *use (gdb) s to step through function*
+
+At this point, I see that there is some significance with the function
+"compare_mtime" so I went back to emacs in order to search for the
+function, finding it on line 2884 and returns "cmp_mtime" which led me to
+line 2864.  Looking into the function, I can see that it uses the function
+"timespec_cmp" so I had to search through the whole "coreutils" directory
+to find it.  After locating it in "/coreutils-with-bug/lib/timespec.h" I
+took a close look at the function.  At first, I had no clue what was going on,
+so I had to look at some online documentation for the C language.  I learned
+that the "time_t" data type holds system time values, but that was not the
+issue.  The issue came witht he declaration for "diff" in that it was declared
+as an "int" data type.  The issue with that is that there is the possibility
+of overflow, so that it could possibly return a negative number when it should
+be positive.  
+
+I created a copy of the file "timespec.h" and renamed the copy 
+"timespecfixed.h" in order to fix the problem. I changed the data type from
+"int" to "long" since the long data type can hold a larger range of numbers
+than an "int" can hold.  Once done, to create the patch, I ran the command
+"diff -u timespec.h timespecfixed.h > lab5.diff" which created the patch.
+After applying the patch using "patch -p0 < lab5.diff" I ran the commands
+again and errors were fixed, which are shown below:
+
+-rw-r--r-- 1 classlai class 0 2016-10-29 22:00:01.846181026 +0000 now1
+-rw-r--r-- 1 classlai class 0 2016-10-29 21:59:51.982918476 +0000 now
+-rw-r--r-- 1 classlai class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+After, I tried the command in the home directory and the following is
+the result:
+
+-rw-r--r-- 1 classlai class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classlai class 0 2016-10-29 22:06:04.014953000 +0000 now1
+-rw-r--r-- 1 classlai class 0 2016-10-29 22:05:59.151488000 +0000 now
+
+As shown, the year was changed to 2054.  According to my TA, the
+SEASnet NFS file system has 32-bit unsigned time stamps while the Local File
+System on the Linux server has 64-bit timestamp.  The home directory is an NFS
+file system, so the dates are represented based on the starting date of
+January 1, 1970.  Any date before that will be interpreted as negative.
+Thus, due to the unsigned condition, the negative number will be interpreted
+as a large positive number, as exhibited by the year 2054.
