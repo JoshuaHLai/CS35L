@@ -1,0 +1,134 @@
+Typing in the command "export LC_ALL='C'" will set us in the C or POSIX locale.
+
+Then, I changed directories to /usr/share/dict in order to find the words
+file.  Using the command "cp words /u/eng/class/classlai," I was able to copy
+the file to my home directory.  Then, I used the command "sort words" in order
+to sort the file. 
+
+Typing "wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/assign2.html"
+I made a file with the HTML code of the webpage, which I then exported to a
+new file called assign2.txt by using the command "cp assign2.html assign2.txt"
+
+Running the Commands of the Lab
+1. Typing in "tr -c 'A-Za-z' '[\n*]' < assign2.txt" will print out the text
+   file with each word that are part of the alphabet (i.e. A-Z, a-z).  Any
+   character that is not part of the alphabet is printed as a new line.  If
+   a word or character has a special font, the word "samp" is printed before
+   and after it. The flag "-c" means the complement of the characters 'A-Za-z'
+   which removes all non-alphabetical letters
+
+2. Typing in "tr -cs 'A-Za-z' '[\n*]' < assign2.txt" will do the same thing
+   as the previous command except that it will remove all of the empty lines,
+   meaning that each word is printed on its own line and there are no new
+   lines in between any of the words. In this command, we added the flag
+   "-s" which squeezes the characters that fall under the parameters
+   we want.
+
+3. Typing in "tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort" will print out
+   the same format as the last command.  In addition, it will sort all the
+   words in the file in alphabetical order.  If there is a word that exist
+   with a capitalized and un-capitalized version (i.e. "you" and "You"),
+   the un-capitalized version is listed first, then the capitalized version
+   is listed after.
+
+4. Typing in "tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u" does the same
+   thing as the previous command with the exception that it will print a word
+   once even if it occurs more than once in the file such as if the word "you"
+   exists in the file 10 times, it will only print out once.  The flag "-u"
+   after sort removes any repetitions of the word (or line in this case) after
+   sorting, thus, printing a list where the lines are unique.
+
+5. Typing in "tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm - words"
+   started to print a long list of words and I could not recognize anything
+   special about it.  In order to work around this, I changed the command by
+   adding " > command5.txt" to the end of the original command line.  There
+   were 3 columns printed out.  The first column had the words that were
+   unique to the sorted "assign2.txt" while the second column had the words
+   that were unique to the "words" file.  The third column then showed the
+   words that appeared in both the "assign2.txt file and the "words" file.
+
+6. Typing "tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm -23 - words"
+   prints out just the first column of the list.  The flag "-23" after the
+   command "comm" will restrict the second and third column being printed out,
+   thus only show the first column, which is the words in assign2.txt.
+
+English to Hawaiian Spelling Checker
+To start out this part of the lab, I used the following command to grab the
+webpage: "wget http://mauimapp.com/moolelo/hwnwdseng.htm" which is then
+stored as "hwndwdseng.htm"
+
+Script
+--------------------------------------------------------------------------
+#!/bin/bash
+
+#set locale to 'C' to make sure program behavior is correct
+export LC_ALL='C'
+
+#find all the lines with <td>...</td>
+grep "<td>.*</td>" |
+
+#remove the lines with the HTML tags
+sed 's/<[^>]*>//g' |
+
+#remove empty lines
+sed '/^$/d' |
+
+#remove the even lines since those are the English words
+sed 'g;n;p' |
+
+#replace okina with apostrophe
+sed "s/\`/'/g" |
+
+#change all characters to lower case
+tr 'A-Z' 'a-z' |
+
+#replace spaces and commas with new lines
+sed 's/[, ]/\n/g' |
+
+#delete the whitespace at the top of the file
+sed '/^$/d' |
+
+#remove words that have non-hawaiian characters
+sed "/[^pk'mnwlhaeiou]/d" |
+
+#sort words alphabetically while removing redundancies
+sort -u
+--------------------------------------------------------------------------
+
+Run the following command to input "hwndwdseng.htm" and have the output
+directed to "hwords":
+./buildwords < hwndwdseng.htm > hwords
+
+Since the question mark (?) is not part of the Hawaiian alphabet, the line
+with those words are not included in the dictionary "hwords"
+
+To utilize a Hawaiian spell-checker, we need to add the following command
+to the script:
+#first command in line taught in lecture to filter everything except
+#characters from A-Z and a-z
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' |
+ sort -u | comm -23 - hwords
+Running the above command, there are 29 instances of misspelled words.
+This probably indicates that there is something wrong with the command.
+
+For the words that are misspelled in English on the webpage, we 
+run the command:
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' |
+ sort -u | comm -23 - words | > misspelledwords.txt
+There were 39 instances of misspelled words: apopo, oe, apelila
+
+For the words that are misspelled in Hawaiian on the webpage, we 
+run the command:
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' |
+ sort -u | comm -23 - hwords | misspelledhwordsenglish.txt
+There were 407 instances of misspelled words: cmp, ctype, opengroup
+
+For the words misspelled in English but not in Hawaiian:
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' 
+| sort -u | comm -23 - words | comm -12 - hwords
+This give 12 instances of misspelled words: lau, makua, and au
+
+For the words misspelled in Hawaiian but not in English:
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' 
+| sort -u | comm -23 - hwords | comm -12 - words > wrongwordsHawaiian.txt
+There are 369 instances of misspelled words: run, samp, br
