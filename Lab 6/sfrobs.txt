@@ -1,0 +1,89 @@
+For this part of the homework, I had to compare the performance of the three programs from this week's lab
+and last week's lab: "sfrob" , "sfrobu" , "sfrobs"
+
+For the test listed below, the first line indicates the command that was run and the time outputs I recevied
+from the system based on the size of the file "homeworkTest.txt" with different number of lines of the text "Hello world!".
+For the "sfrobu" file, I also included the number of comparisons made.
+
+On 10 lines of "Hello world!"
+	time ./sfrob < homeworkTest.txt
+		real    0m0.002s
+		user    0m0.001s
+		sys     0m0.000s
+
+	time ./sfrobu < homeworkTest.txt
+		real    0m0.018s
+		user    0m0.000s
+		sys     0m0.001s
+	Comparisons: 17
+
+	time ./sfrobs < homeworkTest.txt
+		real    0m0.007s
+		user    0m0.002s
+		sys     0m0.006s
+
+On 100 lines of "Hello world!"
+	time ./sfrob < homeworkTest.txt
+		real    0m0.002s
+		user    0m0.001s
+		sys     0m0.001s
+
+	time ./sfrobu < homeworkTest.txt
+		real    0m0.004s
+		user    0m0.001s
+		sys     0m0.002s
+	Comparisons: 319
+
+	time ./sfrobs < homeworkTest.txt
+		real    0m0.007s
+		user    0m0.003s
+		sys     0m0.005s
+
+On 1000 lines of "Hello world!"
+	time ./sfrob < homeworkTest.txt
+		real    0m0.003s
+		user    0m0.001s
+		sys     0m0.003s
+
+	time ./sfrobu < homeworkTest.txt
+		real    0m0.007s
+		user    0m0.000s
+		sys     0m0.006s
+	Comparisons: 4938
+
+	time ./sfrobs < homeworkTest.txt
+		real    0m0.104s
+		user    0m0.005s
+		sys     0m0.109s
+
+On 10000 lines of "Hello world!"
+	time ./sfrob < homeworkTest.txt
+		real    0m0.014s
+		user    0m0.012s
+		sys     0m0.013s
+
+	time ./sfrobu < homeworkTest.txt
+		real    0m0.059s
+		user    0m0.013s
+		sys     0m0.048s
+	Comparisons: 64613
+
+	time ./sfrobs < homeworkTest.txt
+		real    0m0.162s
+		user    0m0.030s
+		sys     0m0.102s
+
+From the tests that I have run, I have the following time points that I can use:
+	Notation: (number of lines, comparisons)
+	(10, 17)
+	(100, 319)
+	(1000, 4938)
+	(10000, 64613)
+
+Using these points, I was able to figure out a function f(x) such that:
+	f(x) = 65.248485x - 635.4848485
+
+Looking at the time points, we can see that "sfrob" tends to perform better than "sfrobu" since we know that "sfrobu"
+utlizes system calls, which tend to take more time than using buffered I/O.  Overall, "sfrobs" tends to perform the worst
+out of all of the executables, since using the bash shell uses an interpreted language and that piping in files for the
+program takes more times to execute commands.
