@@ -1,0 +1,134 @@
+For this lab, we need to create two files that essentially are transliteration
+programs, except that one will utilize buffered I/O and the other will utilize
+unbuffered I/O.
+
+The file "tr2b.c" contains the buffered I/O version of the transliteration program.
+The main significance of this file is that it will use the functions getchar() and putchar().
+In order to write this function, we start with the main() function, where we pass in two
+parameters, the number of arguments and a string input.  Then we check for various errors such
+as length of arguments and number of arguments passed in, etc. Once done, we go through the file
+and translate the bytes given in the input to the output throughout the file. 
+
+The file "tr2u.c" contains the unbuffered I/O version of the transliteration program.
+The error checking is essentially the same as thebuffered.  The main difference between this file and
+the buffered I/O version is that we need to utilize the read() and write() functions from the "unistd.h"
+library, which are system calls.  Once done, we go through the file and translate the bytes given in the
+input to the output throughout the file.
+
+After looking at online documentation, I found that you can generate of file full of random bytes by
+using the following command: "dd if=/dev/zero of=hugeFile.txt bs=5000000 count=1" which did create a large file.
+
+After compiling the two ".c" files using the following commands: "gcc tr2b.c -o tr2b" and "gcc tr2u.c -o tr2u"
+I looked into how strace works. After reading documentation online on "strace" and looking at "man strace" I
+figured out how to compare the efficiences of each of the versions.  According to the hints provided by my TA,
+I should use the flag "-c" which according to "man strace" counts time, calls, and errors for each system call
+and report a summary on program exit.
+
+We then run the following command: "strace -c ./tr2b abc xyz < hugeFile.txt" which printed out a lot of unreadable
+text to the terminal, but also this significant table:
+
+time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 95.93    0.009673           1     10428           write
+  2.52    0.000254           3        82           read
+  0.51    0.000051           6         9           mmap
+  0.32    0.000032           8         4           mprotect
+  0.19    0.000019           5         4           fstat
+  0.16    0.000016           8         2           open
+  0.10    0.000010          10         1           munmap
+  0.08    0.000008           8         1         1 access
+  0.06    0.000006           3         2           close
+  0.06    0.000006           6         1           execve
+  0.04    0.000004           4         1           brk
+  0.04    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.010083                 10536         1 total
+
+Next, we run the following command: "strace -c ./tr2b abc xyz < hugeFile.txt > strace_output_0.txt" which printed
+out this table:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 31.78    0.000123           2        82           read
+ 30.23    0.000117           3        41           write
+ 12.66    0.000049           5         9           mmap
+  7.49    0.000029           7         4           mprotect
+  4.65    0.000018           5         4           fstat
+  3.62    0.000014           7         2           open
+  2.58    0.000010          10         1           munmap
+  1.81    0.000007           4         2           close
+  1.81    0.000007           7         1         1 access
+  1.29    0.000005           5         1           execve
+  1.03    0.000004           4         1           brk
+  1.03    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000387                   149         1 total
+
+Now, we run the following command: "strace -c ./tr2u abc xyz < hugeFile.txt" which printed out this table to the
+terminal:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.61    6.057659           1   5304302           write
+ 44.39    4.836048           1   5242882           read
+  0.00    0.000040           6         7           mmap
+  0.00    0.000029           7         4           mprotect
+  0.00    0.000015           8         2           open
+  0.00    0.000012           6         2           close
+  0.00    0.000010          10         1           munmap
+  0.00    0.000008           4         2           fstat
+  0.00    0.000007           7         1         1 access
+  0.00    0.000005           5         1           execve
+  0.00    0.000004           4         1           brk
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   10.893841              10547206         1 total
+
+
+Now, running the following command: "strace -c ./tr2u abc xyz < hugeFile.txt > strace_output_1.txt" we get the following
+table printed out:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.76    6.101780           1   5304302           write
+ 44.24    4.841901           1   5242882           read
+  0.00    0.000041           6         7           mmap
+  0.00    0.000028           7         4           mprotect
+  0.00    0.000015           8         2           open
+  0.00    0.000010          10         1           munmap
+  0.00    0.000008           4         2           close
+  0.00    0.000007           4         2           fstat
+  0.00    0.000006           6         1         1 access
+  0.00    0.000006           6         1           execve
+  0.00    0.000004           4         1           brk
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   10.943810              10547206         1 total
+
+After reading about documentation on the "time" command, I ran the following commands and below them are their outputs, with
+the occasional printing of unreadable text to the terminal:
+
+"time ./tr2b 'abc' 'xyz' < hugeFile.txt"
+real 0m2.863s
+user 0m0.108s
+sys 0m0.032s
+
+"time ./tr2b 'abc' 'xyz' < hugeFile.txt > time_output_0.txt"
+real 0m0.117s
+user 0m0.091s
+sys 0m0.003s
+
+"time ./tr2u 'abc' 'xyz' < hugeFile.txt"
+real 0m6.563s
+user 0m0.320s
+sys 0m6.188s
+
+"time ./tr2u 'abc' 'xyz' < hugeFile.txt > time_output_1.txt"
+real 0m7.313s
+user 0m0.301s
+sys 0m6.964s
+
+Clearly, after running the "strace" command and the "time" command, we can see that the buffered version is clearly much faster
+than the unbuffered version due to the fact that the unbuffered required a large amount of system calls, which do take a large
+amount of time to compute and utilze much resources. It is also very noticable as I had to wait for a while for the unbuffered
+version to finish.
