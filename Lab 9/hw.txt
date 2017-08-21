@@ -1,0 +1,22 @@
+1.  Even if the other team was able to view all of the bytes that across the network, the data packets would still be safe
+	since they are encrptyed before leaving the sending machine and then decrypted when they reach the receiving machine.
+	
+	If the other team had tapped into the keyboards, it will depend on what we are typing that could change the answer.  If
+	the other team had already tapped into our keyboard while we were typing out the data we wanted to secure, then the data
+	would have been compromised.  If the other team had tapped our keyboards while we were sending the information, then the
+	data should still be secure since the only thing that we are typing is the public key, and not the private key.
+
+	If the other team had physical control of a USB that we are booting off of, then any data that is sent over the network
+	is compromised since they will have anything and everything that the operating system does, including the generation of the
+	keys, meaning that they also have access to the private key.
+
+	Quite frankly, the biggest weakness was even allowing the other team to have access to the bootable USB in the first place.
+	And if the other team were to actually break the encryption, then they are pretty much on another level that we as students
+	could not handle.
+
+2.	The command "gpg --verify" does not verify that I personally created the tar file since it only checks if the signature is
+	valid.  The command does not really check who wrote the document in question or does not describe anything about the creator
+	of the file in question.
+
+	One way in order to work around this issue is to have a function or commands that could check the creator and modifications
+	of the said file when it is sent and received.

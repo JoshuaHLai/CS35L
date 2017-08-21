@@ -1,0 +1,36 @@
+1. Install OpenSSH (should be done on both server and client)
+	sudo apt-get update
+	sudo apt-get install openssh-server
+	sudo apt-get install openssh-client
+2. Server
+	sudo useradd -d /home/<username> -m <UserName>
+	sudo passwd <username>
+	cd /home/<username>
+	sudo mkdir .ssh
+	sudo chown -R <username> .ssh
+	sudo chmod 700 .ssh
+	ifconfig (this will give you the IP address of the server. Give this to your partner)
+	ps aux | grep ssh
+3. Client
+3.1 Password login
+	ping server_ip_addr (just to check if the server responds)
+	ssh <username>@server_ip_addr
+3.2 Password-less login
+	ssh-keygen
+	ssh-copy-id -i <username>@server_ip_addr
+       ssh <username>@server_ip_addr (should not ask for login password)
+3.3 Passphrase-less login
+	ssh-add
+	ssh -X <username>@server_ip_addr (should not ask for key¡¯s passphrase)
+3.4 X session forwarding - running programs with GUI
+	ssh -X <UserName>@server_ip_addr
+	xterm
+	firefox
+
+4. scp command
+4.1 Usage similar to cp
+	scp [source] [destination]
+4.2 Transferring to remote host
+	scp /home/username/doc.txt username@ugrad.seas.ucla.edu: /home/user/docs
+4.3 Transferring from remote host
+	scp username@ugrad.seas.ucla.edu:/home/user/docs/foo.txt/home/username
