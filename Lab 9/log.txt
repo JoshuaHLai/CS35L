@@ -1,0 +1,134 @@
+To start out this lab, I had to load an .iso image file onto a bootable USB stick in order to 
+boot the Ubuntu operating system.  Once I was able to boot into the operating system, I used the following
+command to check what OpenSSH packages were installed natively into it:
+
+"dpkg --get-selections | grep openssh"
+openssh-client                    install
+
+According to the output, we only have the client side of OpenSSH, so we need to install the server side of
+OpenSSH, by running the following command:
+
+"sudo apt-get install openssh-server"
+
+After looking at some online documentation, I also found a command to allow port forwarding, specifically
+into port 22, which is set for SSH.  The following is the command used to allow port forwarding:
+
+"sudo ufw allow 22"
+
+Once installed, I worked with my partner Ankur Papneja (UID# 104630113) to do the client and server exercises
+
+Client-side:
+First, I used the command "ssh-keygen" to generate my key pairs to communicate between the two systems.
+The key is saved automatically in "/home/ubuntu/.ssh/id_rsa" unless specified.  The following is the output
+for "ssh-keygen" :
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): 
+Created directory '/home/ubuntu/.ssh'.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa.
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:HEpa//HsnVynwkFMIjwz9Kl1VKwGDWeaqXGatN2I8rU ubuntu@ubuntu
+The key's randomart image is:
++---[RSA 2048]----+
+|       o. .o+o.  |
+|        *.oOo .  |
+|      o +=O=..   |
+|     + = & +=    |
+|    . o S =o.    |
+|       o o =.    |
+|        . E.o.  o|
+|           .oo +.|
+|            ..=  |
++----[SHA256]-----+
+
+The password for my key is "whatislife" and my partner's IP address was 10.87.85.156
+
+Once done, I ran the following command:
+"ssh-copy-id -i joshua@10.97.85.156"
+
+Running this command will store my key onto the server side so that I can access the server.
+Afterwards, I was prompted with a password and used the password for the account which was "josh_pass"
+which allowed me to store my key
+
+Next, I ran the command "ssh-add" in order to add my private key to the authentication agent.  The
+following is the output from the command
+
+Enter passphrase for /home/ubuntu/.ssh/id_rsa:
+Idntity added: /home/ubuntu/.ssh/id_rsa (/home/ubuntu/.ssh/id_rsa)
+
+Next, I checked whether or not I could actually SSH into the server.  I ran the following command:
+"ssh joshua@10.97.85.156"
+
+After running the command, I was able to successfully SSH into the server without having to input a password
+due to the keys being my authentication.
+
+After exiting the session, I ran the following command to see whether or not I could actually utilize some of the
+software on the server:
+"ssh -X joshua@10.97.85.156"
+
+Using the -X flag will allow me to utilize the XTerm terminal that is natively built into the Ubuntu operating system.
+Once I was able to access the server, I checked whether or not I could actually run commands by using the following:
+
+"xterm"
+"gedit"
+"firefox"
+
+After running all of the commands, the respective applications popped up, thus showing that I was able to successfully
+execute the commands.
+
+
+Server-side:
+To start off the server-side, I generated new keys just in case by running the following command:
+"ssh-keygen"
+
+The following is the output:
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): 
+/home/ubuntu/.ssh/id_rsa already exists.
+Overwrite (y/n)? y
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa.
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:LFN4Km73ed5Lqdkthza7UESWwcT0lett9qeTkajQKDI ubuntu@ubuntu
+The key's randomart image is:
++---[RSA 2048]----+
+|           =*o  o|
+|       .   o+. o |
+|      . o   . . .|
+|       =   .   . |
+|    . + So  .....|
+|   .E..oo ....o.+|
+|    oo.. ...o. =.|
+|   . . . .oB=.+ o|
+|        oo+.*Boo.|
++----[SHA256]-----+
+
+To check my IP address, I used the "ifconfig" command and found that my IP address was 10.97.85.144,
+which seemed to make sense since we were all on the same network in the SEASnet lab.
+
+Next, I had to create an account for the client to access.  I ran the following commands (along with 
+descriptions of each command):
+
+(This command will add a user for the client to SSH into)
+"sudo useradd -d /home/ankur_home -m ankur"
+
+(This command will ask to set a password for the user "ankur" which was set to "ankur_pass")
+"sudo passwd ankur"
+
+(The following 2 commands will allow me to change directories to the user and then make a directory called ".ssh")
+cd /home/ankur
+sudo mkdir .ssh
+
+(The following 2 commands will change the permissions of the directory.  The permissions were changed to allow read,
+write, and execution permissions)
+sudo chown -R username .ssh
+sudo chmod 700 .ssh
+
+After the client finishing all of his steps, we could see that he was successful in his attempt to SSH into the server
+by using the same commands as above when in the XTerm.
