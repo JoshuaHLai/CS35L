@@ -1,4 +1,4 @@
-# Computer-Science-35l
+# Computer-Science-35L
 UCLA Computer Science 35L Fall 2016
 
 | Project       | Grade         | Comments                      |
